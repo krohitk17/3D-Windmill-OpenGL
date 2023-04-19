@@ -4,6 +4,8 @@
 #include <OpenGL/GL.h>
 #include <OpenGL/GLU.h>
 
+using namespace std;
+
 #define BLADE0 -1, -.08, 1.2
 #define BLADE1 1, -.08, 1.2
 #define BLADE2 1, -.08, 5.5
@@ -20,14 +22,14 @@ float viewZ = 0;
 float millAngle = 0;
 float millSpeed = 0;
 
-void rotate()
+void rotate() // rotate the windmill
 {
   millAngle += millSpeed;
   millAngle = fmodf(millAngle, 360);
   glutPostRedisplay();
 }
 
-void reshape(int w, int h)
+void reshape(int w, int h) // reshape the window
 {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -38,7 +40,7 @@ void reshape(int w, int h)
   glLoadIdentity();
 }
 
-static void display(void)
+static void display(void) // display function
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
@@ -57,134 +59,113 @@ static void display(void)
   gluQuadricNormals(disk, GLU_SMOOTH);
   gluQuadricDrawStyle(disk, GLU_FILL);
 
-  glColor3f(0.5, 0.35, 0.05);   // set brown color
-  gluDisk(disk, 0, 15, 50, 50); // ground
+  // create ground
+  glColor3f(0.5, 0.35, 0.05); // set brown color
+  gluDisk(disk, 0, 15, 50, 50);
 
-  glColor3f(0.5, 0.5, 0.5); // set grey color
-
-  // create base of the windmill
+  // create tower of the windmill
+  glColor3f(0.7, 0.7, 0.7);
   gluCylinder(cylinder, 0.7, 0.7, 2.5, 50, 50);
   glTranslatef(0, 0, 2.5);
   gluCylinder(cylinder, 0.6, 0.6, 2.5, 50, 50);
   glTranslatef(0, 0, 2.5);
   gluCylinder(cylinder, 0.5, 0.5, 2.5, 50, 50);
-  glTranslatef(0, 0, 2.5);
-  gluCylinder(cylinder, 0.4, 0.4, 2.5, 50, 50);
 
-  // create wings of the windmill
+  // create nacelle of the windmill
+  glColor3f(0.5, 0.5, 0.5); // set nacelle color
+  glTranslatef(0, 1, 3);
+  glRotatef(90, 1, 0, 0);
+  gluCylinder(cylinder, 1, 1, 2, 50, 50);
+  gluDisk(disk, 0, 1, 50, 50);
   glTranslatef(0, 0, 2);
+  gluDisk(disk, 0, 1, 50, 50);
 
+  // create rotor of the windmill
+  gluCylinder(cylinder, 0.1, 0.1, 0.5, 10, 10);
+  glTranslatef(0, 0, 0.5);
+  gluDisk(disk, 0, 0.1, 10, 10);
+
+  // create blades of the windmill
+  glColor3f(0.6, 0.5, 0.5); // set blade color
+  glTranslatef(0, 0, -0.3);
   glRotatef(90, 1, 0, 0);
 
-  glRotatef(millAngle, 0, 0, 1);
-
-  gluCylinder(cylinder, .15, .15, 1.5, 10, 10);
-  gluDisk(disk, 0, .15, 10, 10);
-
-  glColor3f(0.6, 0.5, 0.5); // set wing color
-  glTranslatef(0, 0, 1);
-  glRotatef(90, 1, 0, 0);
+  glRotatef(millAngle, 0, 1, 0); // rotate the blades
 
   for (int i = 0; i < 4; i++)
   {
     gluCylinder(cylinder, .1, 0, 3, 10, 10);
 
     glRotatef(15, 0, 0, 1);
-
     glBegin(GL_QUADS);
-    glNormal3f(0, 1, 0);
-    glTexCoord2f(0, 0);
+
     glVertex3f(BLADE0);
-    glTexCoord2f(1, 0);
     glVertex3f(BLADE1);
-    glTexCoord2f(1, 3);
     glVertex3f(BLADE2);
-    glTexCoord2f(0, 3);
     glVertex3f(BLADE3);
 
-    glNormal3f(0, -1, 0);
-    glTexCoord2f(0, 0);
     glVertex3f(BLADE7);
-    glTexCoord2f(1, 0);
     glVertex3f(BLADE6);
-    glTexCoord2f(1, 3);
     glVertex3f(BLADE5);
-    glTexCoord2f(0, 3);
     glVertex3f(BLADE4);
 
-    glNormal3f(1, 0, 0);
-    glTexCoord2f(0, 0);
     glVertex3f(BLADE0);
-    glTexCoord2f(1, 0);
     glVertex3f(BLADE3);
-    glTexCoord2f(1, 3);
     glVertex3f(BLADE7);
-    glTexCoord2f(0, 3);
     glVertex3f(BLADE4);
 
-    glNormal3f(-1, 0, 0);
-    glTexCoord2f(0, 0);
     glVertex3f(BLADE1);
-    glTexCoord2f(1, 0);
     glVertex3f(BLADE5);
-    glTexCoord2f(1, 3);
     glVertex3f(BLADE6);
-    glTexCoord2f(0, 3);
     glVertex3f(BLADE2);
 
-    glNormal3f(0, 0, 1);
-    glTexCoord2f(0, 0);
     glVertex3f(BLADE0);
-    glTexCoord2f(1, 0);
     glVertex3f(BLADE4);
-    glTexCoord2f(1, 3);
     glVertex3f(BLADE5);
-    glTexCoord2f(0, 3);
     glVertex3f(BLADE1);
 
-    glNormal3f(0, 0, -1);
-    glTexCoord2f(0, 0);
     glVertex3f(BLADE3);
-    glTexCoord2f(1, 0);
     glVertex3f(BLADE2);
-    glTexCoord2f(1, 3);
     glVertex3f(BLADE6);
-    glTexCoord2f(0, 3);
     glVertex3f(BLADE7);
+
     glEnd();
 
+    glRotatef(-15, 0, 0, 1);
     glRotatef(90, 0, 1, 0);
   }
   gluDeleteQuadric(cylinder);
   gluDeleteQuadric(disk);
+
   glutSwapBuffers();
 }
 
-void keyboard(unsigned char key, int x, int y)
+void keyboard(unsigned char key, int x, int y) // keyboard function
 {
-  if (key == 27)
+  if (key == 27) // escape key
     exit(0);
   switch (key)
   {
-  case 113:
+  case 113: // q
     viewX++;
     break;
-  case 97:
+  case 97: // a
     viewX--;
     break;
-  case 119:
+  case 119: // w
     viewY++;
     break;
-  case 115:
+  case 115: // s
     viewY--;
     break;
-  case 101:
+  case 101: // e
     viewZ++;
     break;
-  case 100:
+  case 100: // d
     viewZ--;
     break;
   default:
+    cout << "Invalid key" << endl;
     break;
   }
 }
@@ -193,11 +174,12 @@ void specialkeyboard(int key, int x, int y)
 {
   switch (key)
   {
-  case GLUT_KEY_LEFT:
+  case GLUT_KEY_RIGHT:
     if (millSpeed > -1)
       millSpeed -= 0.1;
     break;
-  case GLUT_KEY_RIGHT:
+
+  case GLUT_KEY_LEFT:
     if (millSpeed < 1)
       millSpeed += 0.1;
     break;
