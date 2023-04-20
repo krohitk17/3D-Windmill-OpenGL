@@ -205,7 +205,7 @@ int main(int argc, char **argv)
   glutInitWindowPosition(0, 0);
   glutInitWindowSize(HEIGHT, WIDTH);
 
-  glutCreateWindow("Scene");
+  glutCreateWindow("Computer Graphics Project");
   glClearColor(1, 1, 1, 0);
 
   glEnable(GL_DEPTH_TEST);
