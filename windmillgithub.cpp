@@ -6,6 +6,9 @@
 
 using namespace std;
 
+#define HEIGHT 1920
+#define WIDTH 1080
+
 #define BLADE0 -1, -.08, 1.2
 #define BLADE1 1, -.08, 1.2
 #define BLADE2 1, -.08, 5.5
@@ -15,12 +18,23 @@ using namespace std;
 #define BLADE6 1, .08, 5.5
 #define BLADE7 -1, .08, 5.5
 
-float viewX = 0;
-float viewY = 0;
-float viewZ = 0;
+float viewX = 10;
+float viewY = -15;
+float viewZ = 7;
 
 float millAngle = 0;
 float millSpeed = 0;
+
+void displayData()
+{
+  glRasterPos2f(10, 10);
+
+  const char *text = "Hello, World!";
+  for (int i = 0; i < strlen(text); i++)
+  {
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, text[i]);
+  }
+}
 
 void rotate() // rotate the windmill
 {
@@ -33,7 +47,7 @@ void reshape(int w, int h) // reshape the window
 {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(55, 1.777777, 1, 50);
+  gluPerspective(55, (float)HEIGHT / (float)WIDTH, 1, 50);
 
   glViewport(0, 0, w, h);
   glMatrixMode(GL_MODELVIEW);
@@ -45,18 +59,16 @@ static void display(void) // display function
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
 
+  glColor3f(0, 0, 0);
+  displayData();
+
   gluLookAt(viewX, viewY, viewZ, 0, 0, viewZ, 0, 0, 1);
 
   GLUquadricObj *cylinder;
   cylinder = gluNewQuadric();
+  gluQuadricDrawStyle(cylinder, GLU_FILL);
   GLUquadricObj *disk;
   disk = gluNewQuadric();
-
-  gluQuadricTexture(cylinder, GLU_TRUE);
-  gluQuadricNormals(cylinder, GLU_SMOOTH);
-  gluQuadricDrawStyle(cylinder, GLU_FILL);
-  gluQuadricTexture(disk, GLU_TRUE);
-  gluQuadricNormals(disk, GLU_SMOOTH);
   gluQuadricDrawStyle(disk, GLU_FILL);
 
   // create ground
@@ -191,19 +203,12 @@ int main(int argc, char **argv)
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
   glutInit(&argc, argv);
   glutInitWindowPosition(0, 0);
-  glutInitWindowSize(1920, 1080);
+  glutInitWindowSize(HEIGHT, WIDTH);
 
   glutCreateWindow("Scene");
-  glClearColor(1, 1, 1, 0.0);
-
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  glEnable(GL_NORMALIZE);
+  glClearColor(1, 1, 1, 0);
 
   glEnable(GL_DEPTH_TEST);
-  glShadeModel(GL_SMOOTH);
-  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
   glutReshapeFunc(reshape);
   glutDisplayFunc(display);
