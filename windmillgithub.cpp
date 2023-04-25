@@ -11,12 +11,12 @@ using namespace std;
 
 #define BLADE0 -1, -.08, 1.2
 #define BLADE1 1, -.08, 1.2
-#define BLADE2 1, -.08, 5.5
-#define BLADE3 -1, -.08, 5.5
+#define BLADE2 0.5, -.08, 5.5
+#define BLADE3 -0.5, -.08, 5.5
 #define BLADE4 -1, .08, 1.2
 #define BLADE5 1, .08, 1.2
-#define BLADE6 1, .08, 5.5
-#define BLADE7 -1, .08, 5.5
+#define BLADE6 0.5, .08, 5.5
+#define BLADE7 -0.5, .08, 5.5
 
 float viewX = 10;
 float viewY = -15;
@@ -24,17 +24,6 @@ float viewZ = 7;
 
 float millAngle = 0;
 float millSpeed = 0;
-
-void displayData()
-{
-  glRasterPos2f(10, 10);
-
-  const char *text = "Hello, World!";
-  for (int i = 0; i < strlen(text); i++)
-  {
-    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, text[i]);
-  }
-}
 
 void rotate() // rotate the windmill
 {
@@ -47,58 +36,88 @@ void reshape(int w, int h) // reshape the window
 {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(55, (float)HEIGHT / (float)WIDTH, 1, 50);
+  gluPerspective(45, (float)HEIGHT / (float)WIDTH, 1, 100);
 
   glViewport(0, 0, w, h);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }
 
-static void display(void) // display function
+void display() // display function
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
 
-  glColor3f(0, 0, 0);
-  displayData();
-
   gluLookAt(viewX, viewY, viewZ, 0, 0, viewZ, 0, 0, 1);
 
-  GLUquadricObj *cylinder;
-  cylinder = gluNewQuadric();
-  gluQuadricDrawStyle(cylinder, GLU_FILL);
-  GLUquadricObj *disk;
-  disk = gluNewQuadric();
-  gluQuadricDrawStyle(disk, GLU_FILL);
+  GLUquadricObj *cylinderFill;
+  cylinderFill = gluNewQuadric();
+  gluQuadricDrawStyle(cylinderFill, GLU_FILL);
+
+  GLUquadricObj *diskFill, *diskLine;
+  diskFill = gluNewQuadric();
+  gluQuadricDrawStyle(diskFill, GLU_FILL);
+  diskLine = gluNewQuadric();
+  gluQuadricDrawStyle(diskLine, GLU_SILHOUETTE);
 
   // create ground
   glColor3f(0.5, 0.35, 0.05); // set brown color
-  gluDisk(disk, 0, 15, 50, 50);
+  gluDisk(diskFill, 0, 15, 50, 50);
+  glColor3f(0, 0, 0);
+  gluDisk(diskLine, 0, 15, 50, 50);
 
   // create tower of the windmill
   glColor3f(0.7, 0.7, 0.7);
-  gluCylinder(cylinder, 0.7, 0.7, 2.5, 50, 50);
+  gluCylinder(cylinderFill, 0.7, 0.7, 2.5, 50, 50);
+
+  glColor3f(0, 0, 0);
+  gluDisk(diskLine, 0, 0.7, 50, 50);
   glTranslatef(0, 0, 2.5);
-  gluCylinder(cylinder, 0.6, 0.6, 2.5, 50, 50);
+  gluDisk(diskLine, 0, 0.7, 50, 50);
+
+  glColor3f(0.7, 0.7, 0.7);
+  gluCylinder(cylinderFill, 0.6, 0.6, 2.5, 50, 50);
+
+  glColor3f(0, 0, 0);
+  gluDisk(diskLine, 0, 0.6, 50, 50);
   glTranslatef(0, 0, 2.5);
-  gluCylinder(cylinder, 0.5, 0.5, 2.5, 50, 50);
+  gluDisk(diskLine, 0, 0.6, 50, 50);
+
+  glColor3f(0.7, 0.7, 0.7);
+  gluCylinder(cylinderFill, 0.5, 0.5, 2.5, 50, 50);
+  glColor3f(0, 0, 0);
+  gluDisk(diskLine, 0, 0.5, 50, 50);
+  glTranslatef(0, 0, 2.5);
+  gluDisk(diskLine, 0, 0.5, 50, 50);
+  glTranslatef(0, 0, -2.5);
 
   // create nacelle of the windmill
   glColor3f(0.5, 0.5, 0.5); // set nacelle color
+
   glTranslatef(0, 1, 3);
   glRotatef(90, 1, 0, 0);
-  gluCylinder(cylinder, 1, 1, 2, 50, 50);
-  gluDisk(disk, 0, 1, 50, 50);
+  gluCylinder(cylinderFill, 1, 1, 2, 50, 50);
+
+  glColor3f(0.5, 0.5, 0.5);
+  gluDisk(diskFill, 0, 1, 50, 50);
+  glColor3f(0, 0, 0);
+  gluDisk(diskLine, 0, 1, 50, 50);
+
   glTranslatef(0, 0, 2);
-  gluDisk(disk, 0, 1, 50, 50);
+  glColor3f(0.5, 0.5, 0.5);
+  gluDisk(diskFill, 0, 1, 50, 50);
+  glColor3f(0, 0, 0);
+  gluDisk(diskLine, 0, 1, 50, 50);
 
   // create rotor of the windmill
-  gluCylinder(cylinder, 0.1, 0.1, 0.5, 10, 10);
+  glColor3f(0.5, 0.5, 0.5);
+  gluCylinder(cylinderFill, 0.1, 0.1, 0.5, 10, 10);
   glTranslatef(0, 0, 0.5);
-  gluDisk(disk, 0, 0.1, 10, 10);
+  gluDisk(diskFill, 0, 0.1, 50, 10);
+  glColor3f(0, 0, 0);
+  gluDisk(diskLine, 0, 0.1, 50, 10);
 
   // create blades of the windmill
-  glColor3f(0.6, 0.5, 0.5); // set blade color
   glTranslatef(0, 0, -0.3);
   glRotatef(90, 1, 0, 0);
 
@@ -106,7 +125,11 @@ static void display(void) // display function
 
   for (int i = 0; i < 4; i++)
   {
-    gluCylinder(cylinder, .1, 0, 3, 10, 10);
+    gluDisk(diskLine, 0, 0.1, 10, 10);
+    glColor3f(0.7, 0.7, 0.7); // set blade color
+    gluCylinder(cylinderFill, 0.1, 0, 3, 10, 10);
+
+    // create blades
 
     glRotatef(15, 0, 0, 1);
     glBegin(GL_QUADS);
@@ -143,13 +166,58 @@ static void display(void) // display function
 
     glEnd();
 
+    // create blade outlines
+
+    glColor3f(0, 0, 0);
+    glBegin(GL_LINES);
+
+    glVertex3f(BLADE0);
+    glVertex3f(BLADE1);
+
+    glVertex3f(BLADE1);
+    glVertex3f(BLADE2);
+
+    glVertex3f(BLADE2);
+    glVertex3f(BLADE3);
+
+    glVertex3f(BLADE3);
+    glVertex3f(BLADE0);
+
+    glVertex3f(BLADE4);
+    glVertex3f(BLADE5);
+
+    glVertex3f(BLADE5);
+    glVertex3f(BLADE6);
+
+    glVertex3f(BLADE6);
+    glVertex3f(BLADE7);
+
+    glVertex3f(BLADE7);
+    glVertex3f(BLADE4);
+
+    glVertex3f(BLADE0);
+    glVertex3f(BLADE4);
+
+    glVertex3f(BLADE1);
+    glVertex3f(BLADE5);
+
+    glVertex3f(BLADE2);
+    glVertex3f(BLADE6);
+
+    glVertex3f(BLADE3);
+    glVertex3f(BLADE7);
+
+    glEnd();
+
     glRotatef(-15, 0, 0, 1);
     glRotatef(90, 0, 1, 0);
   }
-  gluDeleteQuadric(cylinder);
-  gluDeleteQuadric(disk);
+  gluDeleteQuadric(cylinderFill);
+  gluDeleteQuadric(diskFill);
+  gluDeleteQuadric(diskLine);
 
   glutSwapBuffers();
+  rotate();
 }
 
 void keyboard(unsigned char key, int x, int y) // keyboard function
@@ -187,12 +255,12 @@ void specialkeyboard(int key, int x, int y)
   switch (key)
   {
   case GLUT_KEY_RIGHT:
-    if (millSpeed > -1)
+    if (millSpeed > -2)
       millSpeed -= 0.1;
     break;
 
   case GLUT_KEY_LEFT:
-    if (millSpeed < 1)
+    if (millSpeed < 2)
       millSpeed += 0.1;
     break;
   }
@@ -209,10 +277,10 @@ int main(int argc, char **argv)
   glClearColor(1, 1, 1, 0);
 
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_LINE_SMOOTH);
 
   glutReshapeFunc(reshape);
   glutDisplayFunc(display);
-  glutIdleFunc(rotate);
 
   glutKeyboardFunc(keyboard);
   glutSpecialFunc(specialkeyboard);
