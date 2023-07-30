@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C++: Launch OpenGL",
+            "type": "lldb",
+            "request": "launch",
+            "preLaunchTask": "C++: Build OpenGL",
+            "postDebugTask": "C++: Delete Executable",
+            "program": "${relativeFileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "exitCommands": [
+                "exit",
+            ]
+        },
+    ]
+}
